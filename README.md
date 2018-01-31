@@ -8,5 +8,5 @@
 * You can run hypoxemia_chart and hypexemia_lab first!
 * Then hypoxemia_merge.
 * Finally goes hypoxemia_cohort.
-#### Then you will get a dataset contain patients having record of OI <= 100
-#### And have their CVP and DBP value in 6 hour before and after.
+#### Then you will get a dataset contains patients having record of OI <= 100
+#### And get their CVP and DBP value in 6 hour before and after.
