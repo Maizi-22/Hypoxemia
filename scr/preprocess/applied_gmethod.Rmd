@@ -1,0 +1,14 @@
+---
+title: "Analysis of hypoxemia project--Using g-method"
+output: html_document
+---
+
+```{r load data}
+library(readr)
+data.simple100 <- read.csv('~/Documents/R-projects/Hypoxemia/data/data_simple100.csv')
+```
+
+```{r}
+library(DTRreg)
+```
+

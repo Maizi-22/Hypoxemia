@@ -1,0 +1,47 @@
+itemid,label,table
+PEEP,,
+1096,Auto-PEEP level,chartevents
+505,PEEP,chartevents
+506,PEEP Set,chartevents
+60,Auto-PEEP Level,chartevents
+437,Low Peep,chartevents
+224700,Total PEEP Level,chartevents
+220339,PEEP set,chartevents
+50819,PEEP,labevents
+686,Total PEEP Level,chartevents
+,,
+Fio2,,
+3422,FIO2 [Meas],chartevents
+3420,FIO2,chartevents
+190,FiO2 Set,chartevents
+223835,Inspired O2 Fraction (FiO2),
+50816,Oxygen,labevents
+,,
+Pao2,,
+need to predict,,
+,,
+CVP,,
+1103,cvp,chartevents
+113,CVP,chartevents
+1250,,
+118,,
+220074,Central Venous Pressure,chartevents
+,,
+,,
+DBP,,
+8368,confirmed,chartevents
+8440,confirmed,chartevents
+8441,confirmed,chartevents
+8555,confirmed,chartevents
+220180,confirmed,chartevents
+220051,confirmed,chartevents
+118,,
+,,
+,,
+DBP,,
+8368,confirmed,chartevents
+8440,confirmed,chartevents
+8441,confirmed,chartevents
+8555,confirmed,chartevents
+220180,confirmed,chartevents
+220051,confirmed,chartevents
