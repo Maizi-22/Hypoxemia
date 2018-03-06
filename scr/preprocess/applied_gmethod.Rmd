@@ -1,14 +1,47 @@
 ---
-title: "Analysis of hypoxemia project--Using g-method"
+title: "Analysis of hypoxemia project--Using regression"
 output: html_document
 ---
 
 ```{r load data}
+setwd('~/Documents/R-projects/Hypoxemia/')
 library(readr)
-data.simple100 <- read.csv('~/Documents/R-projects/Hypoxemia/data/data_simple100.csv')
+data.simple100.test <- read.csv('~/Documents/R-projects/Hypoxemia/data/data_simple200_test.csv')
 ```
 
 ```{r}
-library(DTRreg)
+library(tableone)
+catvars <- c("cvp", "dbp", "peep", 'heartrate') 
+base.table <- CreateTableOne(vars=catvars, strata = 'group', data = data.simple100.test)
+nonNormalVars <- c("cvp", "dbp", "peep", 'heartrate')
+base.table2 <- print(base.table, nonnormal = nonNormalVars)
+a <- print(base.table2, quote = TRUE)[, -4]
+colnames(a) <- c('pre', 'post', 'p_value')
+a <- a[-1, ]
+write.csv(a, '~/Documents/R-projects/Hypoxemia/result/summarytable200.csv')
+```
+
+```{r}
+
+model1.output <- lm(cvp ~ peep + heartrate + group, data = data.simple100.test)
+summary(model1.output)
+confint(model1.output)
+b1 <- cbind(round(coef(model1.output), 2), round(confint(model1.output), 2))
+b1 <- cbind(paste(b1[, 1], '(', b1[, 2], ',', b1[, 3], ')'))
+b1 <- data.frame(var = c('inter', 'PEEP', 'heart rate', 'group'), 'OR(95%CI)' = b1[, 1])
+
+
+model2.output <- lm(dbp ~ peep + heartrate + group, data = data.simple100.test)
+summary(model2.output)
+confint(model2.output)
+b1 <- cbind(round(coef(model2.output), 2), round(confint(model2.output), 2))
+b1 <- cbind(paste(b1[, 1], '(', b1[, 2], ',', b1[, 3], ')'))
+b1 <- data.frame(var = c('inter', 'PEEP', 'heart rate', 'group'), 'OR(95%CI)' = b1[, 1])
+
+
+model3.output <- lm(cvp_dbp ~ peep + heartrate + group, data = data.simple100.test)
+summary(model3.output)
+confint(model3.output)
+
 ```
 
