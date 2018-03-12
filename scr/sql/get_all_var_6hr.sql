@@ -4,6 +4,7 @@ WITH tmp AS (
     SELECT DISTINCT
       hc.subject_id,
       hc.hadm_id,
+      hc.icustay_id,
       hc.onsettime,
       hc.pao2fio2ratio
       -- cvp
@@ -161,7 +162,7 @@ WITH tmp AS (
       LEFT JOIN hypoxemia_var hv
         ON hv.hadm_id = hc.hadm_id
 )
-SELECT subject_id, hadm_id, onsettime, pao2fio2ratio
+SELECT subject_id, hadm_id, icustay_id, onsettime, pao2fio2ratio, fio2
        , avg(tmp.cvp_pre1) AS cvp_pre1
        , avg(tmp.cvp_pre2) AS cvp_pre2
        , avg(tmp.cvp_pre3) AS cvp_pre3
@@ -211,5 +212,5 @@ SELECT subject_id, hadm_id, onsettime, pao2fio2ratio
        , avg(tmp.heartrate_post5) AS heartrate_post5
        , avg(tmp.heartrate_post6) AS heartrate_post6
   FROM tmp
- GROUP BY subject_id, hadm_id, onsettime, pao2fio2ratio;
+ GROUP BY subject_id, hadm_id, icustay_id, onsettime, pao2fio2ratio, fio2;
 
