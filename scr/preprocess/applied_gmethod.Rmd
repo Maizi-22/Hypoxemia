@@ -6,42 +6,97 @@ output: html_document
 ```{r load data}
 setwd('~/Documents/R-projects/Hypoxemia/')
 library(readr)
-data.simple100.test <- read.csv('~/Documents/R-projects/Hypoxemia/data/data_simple200_test.csv')
+
+data.simple100.test <- read.csv('~/Documents/R-projects/Hypoxemia/data/data_simple100.csv')[, -1]
+data.simple100.test <- data.simple100.test[data.simple100.test$dbp_pre >= 45, ]
+data.simple100.test <- data.simple100.test[data.simple100.test$dbp_post >= 45, ]
+a <- data.simple100.test[, c('icustay_id', 'cvp_pre', 'dbp_pre', 'peep_pre', 'heartrate_pre', 'cvp_dbp_pre')]
+names(a) <- c('icustay_id', 'cvp', 'dbp', 'peep', 'heartrate', 'cvp_dbp')
+a$group <- 0
+b <- data.simple100.test[, c('icustay_id', 'cvp_post', 'dbp_post', 'peep_post', 'heartrate_post', 'cvp_dbp_post')]
+names(b) <- c('icustay_id', 'cvp', 'dbp', 'peep', 'heartrate', 'cvp_dbp')
+b$group <- 1
+data.simple100.test <- rbind(a, b)
+
+
+data.simple200.test <- read.csv('~/Documents/R-projects/Hypoxemia/data/data_simple200.csv')[, -1]
+data.simple200.test <- data.simple200.test[data.simple200.test$dbp_pre >= 45, ]
+data.simple200.test <- data.simple200.test[data.simple200.test$dbp_post >= 45, ]
+a <- data.simple200.test[, c('icustay_id', 'cvp_pre', 'dbp_pre', 'peep_pre', 'heartrate_pre', 'cvp_dbp_pre')]
+names(a) <- c('icustay_id', 'cvp', 'dbp', 'peep', 'heartrate', 'cvp_dbp')
+a$group <- 0
+b <- data.simple200.test[, c('icustay_id', 'cvp_post', 'dbp_post', 'peep_post', 'heartrate_post', 'cvp_dbp_post')]
+names(b) <- c('icustay_id', 'cvp', 'dbp', 'peep', 'heartrate', 'cvp_dbp')
+b$group <- 1
+data.simple200.test <- rbind(a, b)
 ```
 
 ```{r}
 library(tableone)
 catvars <- c("cvp", "dbp", "peep", 'heartrate') 
-base.table <- CreateTableOne(vars=catvars, strata = 'group', data = data.simple100.test)
+base.table <- CreateTableOne(vars=catvars, strata = 'group', data = data.simple200.test)
 nonNormalVars <- c("cvp", "dbp", "peep", 'heartrate')
 base.table2 <- print(base.table, nonnormal = nonNormalVars)
 a <- print(base.table2, quote = TRUE)[, -4]
+# 0 as pre and 1 as post
 colnames(a) <- c('pre', 'post', 'p_value')
 a <- a[-1, ]
-write.csv(a, '~/Documents/R-projects/Hypoxemia/result/summarytable200.csv')
+# write.csv(a, '~/Documents/R-projects/Hypoxemia/result/summarytable200.csv')
 ```
 
 ```{r}
-
-model1.output <- lm(cvp ~ peep + heartrate + group, data = data.simple100.test)
+model1.output <- lm(cvp ~ peep + heartrate + group, data = data.simple200.test)
 summary(model1.output)
-confint(model1.output)
-b1 <- cbind(round(coef(model1.output), 2), round(confint(model1.output), 2))
-b1 <- cbind(paste(b1[, 1], '(', b1[, 2], ',', b1[, 3], ')'))
-b1 <- data.frame(var = c('inter', 'PEEP', 'heart rate', 'group'), 'OR(95%CI)' = b1[, 1])
+b1 <- cbind(round(coef(model1.output), 2), round(confint(model1.output), 2), p_value = round(coef(summary(model1.output))[, 4], 2))
+b1 <- cbind(paste(b1[, 1], '(', b1[, 2], ',', b1[, 3], ')'), b1[, 4])
+b1 <- data.frame(var = c('inter', 'PEEP', 'heart rate', 'group'), 'OR(95%CI)' = b1[, 1], 'p-value' = b1[, 2])
 
-
-model2.output <- lm(dbp ~ peep + heartrate + group, data = data.simple100.test)
+model2.output <- lm(dbp ~ peep + heartrate + group, data = data.simple200.test)
 summary(model2.output)
-confint(model2.output)
-b1 <- cbind(round(coef(model2.output), 2), round(confint(model2.output), 2))
-b1 <- cbind(paste(b1[, 1], '(', b1[, 2], ',', b1[, 3], ')'))
-b1 <- data.frame(var = c('inter', 'PEEP', 'heart rate', 'group'), 'OR(95%CI)' = b1[, 1])
-
+b1 <- cbind(round(coef(model2.output), 2), round(confint(model2.output), 2), p_value = round(coef(summary(model2.output))[, 4], 2))
+b1 <- cbind(paste(b1[, 1], '(', b1[, 2], ',', b1[, 3], ')'), b1[, 4])
+b1 <- data.frame(var = c('inter', 'PEEP', 'heart rate', 'group'), 'OR(95%CI)' = b1[, 1], 'p-value' = b1[, 2])
 
 model3.output <- lm(cvp_dbp ~ peep + heartrate + group, data = data.simple100.test)
 summary(model3.output)
-confint(model3.output)
+b1 <- cbind(round(coef(model3.output), 2), round(confint(model3.output), 2), p_value = round(coef(summary(model3.output))[, 4], 2))
+b1 <- cbind(paste(b1[, 1], '(', b1[, 2], ',', b1[, 3], ')'), b1[, 4])
+b1 <- data.frame(var = c('inter', 'PEEP', 'heart rate', 'group'), 'OR(95%CI)' = b1[, 1], 'p-value' = b1[, 2])
+```
 
+Baseline characteristics
+```{r}
+library(tableone)
+data.simple100.test <- read.csv('~/Documents/R-projects/Hypoxemia/data/data_simple100.csv')[, -1]
+data.simple100.test <- data.simple100.test[data.simple100.test$dbp_pre >= 45, ]
+data.simple100.test <- data.simple100.test[data.simple100.test$dbp_post >= 45, ]
+
+data.simple200.test <- read.csv('~/Documents/R-projects/Hypoxemia/data/data_simple200.csv')[, -1]
+data.simple200.test <- data.simple200.test[data.simple200.test$dbp_pre >= 45, ]
+data.simple200.test <- data.simple200.test[data.simple200.test$dbp_post >= 45, ]
+
+# merge basic info
+basic.data <- read.csv('~/Documents/R-projects/Hypoxemia/data/basic_info.csv')
+data.simple100.test <- merge(data.simple100.test, basic.data, by = 'icustay_id')
+data.simple200.test <- merge(data.simple200.test, basic.data, by = 'icustay_id')
+data.simple100.test$fio2_100 <- ifelse(data.simple100.test$fio2 == 100, 1, 0)
+data.simple100.test$fio2_80_90 <- ifelse(data.simple100.test$fio2 >= 80 & data.simple100.test$fio2 != 100, 1, 0)
+data.simple200.test$fio2_100 <- ifelse(data.simple200.test$fio2 == 100, 1, 0)
+data.simple200.test$fio2_80_90 <- ifelse(data.simple200.test$fio2 >= 80 & data.simple200.test$fio2 != 100, 1, 0)
+
+data.simple100.test[, c('fio2_100', 'fio2_80_90', 'hospital_expire_flag')] <- lapply(data.simple100.test[, c('fio2_100', 'fio2_80_90', 'hospital_expire_flag')], as.factor)
+data.simple200.test[, c('fio2_100', 'fio2_80_90', 'hospital_expire_flag')] <- lapply(data.simple200.test[, c('fio2_100', 'fio2_80_90', 'hospital_expire_flag')], as.factor)
+
+# create summary table 
+vars <- c('age', 'gender', 'los_hospital', 'los_icu', 'mv_duration', 'hospital_expire_flag', 'fio2_100', 'fio2_80_90')
+# for severe hypoxemia patients
+base.table <- CreateTableOne(vars=vars, data = data.simple100.test)
+nonNormalVars <- c('age', 'los_hospital', 'los_icu', 'mv_duration')
+base.table2 <- print(base.table, nonnormal = nonNormalVars)
+# for moderate hypoxemia patients
+base.table3 <- CreateTableOne(vars=vars, data = data.simple200.test)
+base.table4 <- print(base.table3, nonnormal = nonNormalVars)
+a <- cbind(base.table2, base.table4)
+write.csv(a, '~/Documents/R-projects/Hypoxemia/result/baseline.csv')
 ```
 

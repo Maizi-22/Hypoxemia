@@ -9,7 +9,7 @@ MeanCol <- function(x){
 
 # first generate a simple form contain only cvp_pre and cvp_post etc.
 GetSimpleData <- function(data){
-  data.simple <- data[, c('hadm_id', 'onsettime', 'pao2fio2ratio')]
+  data.simple <- data[, c('icustay_id', 'onsettime', 'pao2fio2ratio', 'fio2')]
   # data.simple <- data.raw.6hr[, c(1:2, 39, 40)]
   # caculate mean value of 6 timestamp of every variable
   data.simple$cvp_pre <- apply(data[, c('cvp_pre1', 'cvp_pre2', 'cvp_pre3', 'cvp_pre4', 'cvp_pre5', 'cvp_pre6')], 1, MeanCol)
